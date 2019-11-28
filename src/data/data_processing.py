@@ -3,8 +3,32 @@
 import pandas as pd
 import numpy as np
 
+__author__ = "Simen Svenkerud"
+__copyright__ = "Statistics Norway 2019, Seksjon 426"
+__credits__ = ['na']
+
+__licence__ = 'n/a'
+__version__ = '
+__maintainer__ = 'Simen Svenkerud'
+__ email__ = 'ssv@ssb.no'
+__status__ = 'Development'
+
 def set_min_value(df, col, min_value):
     '''
+    Function to copy a column, but setting a floor for the possible values
+    
+    This function takes the given input column and makes a copy.
+    This copy is then checked if it is belov a given treshold. 
+    If the value is belov a treshold, it replaces the value with the treshold set.
+    
+    :param df: The Dataframe to perform this function on 
+    :type df: Data frame
+    :param col: The column to impse floor on
+    :type col: Numerical array
+    :param min_value: Lowest possible value treshold
+    :type min_value: Int or float
+    :return: A copy of input dataframe with new column
+    :rtype: Data frame
     '''
     for col in col:
         df[col+'_adj'] = df[col].where(df[col]>min_value, min_value)
@@ -12,8 +36,32 @@ def set_min_value(df, col, min_value):
     return df
 
 
-def Collect_area_from_prioritised_3variables(df,prioritised_col,new_col, treshold_value, math_index = None, math_col= None, mathtype= None):
+def Collect_value_from_prioritised_3variables(df,prioritised_col,new_col, treshold_value, math_index = None, math_col= None, mathtype= None):
     '''
+    A function to collect a value form a prioritised list of three variables
+    
+    This function was created for a spessifik task, possibly not sufficently generalized.
+    Given you have a prioritised list of 3 columns this function will collect the value from he first value found.
+    It functuions simmilarly to coalece in SQL. 
+    However it also performs a multiplication or division with one of the prioritised columns.
+    Was originally created for fritidsbolig statistikken.
+    
+    :param df: DataFram to perform function on
+    :type df: DataFrame
+    :param prioritised_col: These are the columns in prioritised order that contain the values to look for 
+    :type prioritised_col: List of column names
+    :param new_col: Name of the resulting column
+    :type new_col: string
+    :param treshold_value: Lower treshold for possible values
+    :type treshold_value: int or float
+    :param math_index: the index position within the prioritised_col that is to be multiplied or divided
+    :type math_index: Int
+    :param math_col: The name of the collum to be used as counter part in the calculation
+    :type math_col: Str
+    :param mathtype: div or mult
+    :type mathtype: Str
+    :return: Returns Copy of Dataframe with additional column
+    :rtype: DataFrame
     '''
     for col in prioritised_col:
         for cell in df[col]:
@@ -52,6 +100,20 @@ def Collect_area_from_prioritised_3variables(df,prioritised_col,new_col, treshol
     return df
 
 def add_counter_col(df, grouping_col, counting_col, new_col_name):
+    '''
+    Adds a counter column based on a given grouping variable to a DataFrame
+    
+    :param df: DataFrame to perform calculation on
+    :type df: DataFrame
+    :param grouping_col: The name of the column to use as grouping variable in counting
+    :type grouping_col: Str, column name 
+    :param counting_col: The name of the column to count
+    :type counting_col: Str, columnname
+    :param new_col_name: The name of the new counting column
+    :type new_col_name: Str, columnname
+    :return: A copy of the dataframe with a counting column attached
+    :rtypes: DataFrame
+    '''
     counter = df.groupby(grouping_col)[counting_col].count().reset_index()
     counter.columns = [grouping_col, new_col_name]
     df = pd.merge(df, counter, on=grouping_col, how ='left')
@@ -60,12 +122,28 @@ def add_counter_col(df, grouping_col, counting_col, new_col_name):
 
 def conditional_area_adjustments(df, unit_area, total_area, counter_col, min_treshold=1, max_treshold=1000):
     '''
-    This is a highly custom function for this script only, 
+    Adjust value in col a, to make sure it is not greater than col b
+    
+    This is a highly custom function buildt for "fritidsbolig statistikken" 
     it aims to make sure that unit size i not larger than total size,
     and that in the case of missing unit size we can take a proportion of 
     the total area, instead. 
+    *This should possibly be improoved upon later*
     
-    * This should possibly be improoved upon later*
+    :param df:
+    :type df:
+    :param unit_area:
+    :type unit_area:
+    :param total_area:
+    :type total_area:
+    :param counter_col:
+    :type counter_col: 
+    :param min_treshold:
+    :type min_treshold:
+    :param max_treshold:
+    :type max_treshold:
+    :return:
+    :rtype:
     '''
     tot = np.array(df[total_area].values.tolist())
     a = np.array(df[unit_area].values.tolist())
@@ -112,63 +190,32 @@ def seperate_by_value(df, split_col, split_value, new_df):
     new_df[1] = df.loc[(df[split_col]<split_value)]
     
     return  new_df[0], new_df[1]
-    
-def load_geo_variables(name_file):
+
+
+
+def replace_values(col, value, to_replace = np.nan, df=df):
     '''
-    '''
-    df_list = []
-    for k, v in name_file.item():
-        k = pd.read_csv(PATH+'data/raw/'+v+'.csv', sep=';')
-        df_list.append(k)
-        
-    geo_df = join_df_2_one('geo_df',
-                              old_dfs=df_list,
-                              join_on = GEO_BYGGNINGNR
-                             )
-    return geo_df
-
-
-def create_statbank_tables_simple(df, groupings_name, counter_col, math_func, path):
-    for k, v in groupings_name.items():
-        if math_func == 'sum':
-            table = df.groupby(v)[counter_col].sum().fillna(0)
-        elif math_func == 'mean':
-            table = df.groupby(v)[counter_col].mean().fillna(0)
-        elif math_func == 'count':
-            table = df.groupby(v)[counter_col].count().fillna(0)
-        else:
-            print('please spessify aggregation type')
-            
-        table.to_csv(path+k+'.csv', sep=';')
-
-        return 'Statbank table created'
+    Replaces values in the given columns.
     
-def create_statbank_tables_complex(df, groupings_name, counter_col, math_func, path):
-    for k, v in groupings_name.items():
-        if math_func == 'sum':
-            table = df.groupby(v)[counter_col]\
-                      .sum()\
-                      .unstack()\
-                      .reset_index()\
-                      .fillna(0)
-        elif math_func == 'mean':
-            table = df.groupby(v)[counter_col]\
-                      .mean()\
-                      .unstack()\
-                      .reset_index()\
-                      .fillna(0)
-        elif math_func == 'count':
-            table = df.groupby(v)[counter_col]\
-                      .count()\
-                      .unstack()\
-                      .reset_index()\
-                      .fillna(0)
-        else:
-            print('please spessify aggregation type')
-            
-        table.to_csv(path+k+'.csv', sep=';')
+    df
+    col
+    to_replace
+    value
+    '''
+    df[col]=df[col].replace(to_replace, value)
+    return df
 
-
+def coalece_columns(new_col, old_col, coalece_col, df=df):
+    '''
+    Coaleces a series of collumns into a new column
+    
+    df
+    new_col
+    old_col
+    coalece_col
+    '''
+    df[new_col] = df[old_col].combine_first(df[coalece_col])
+    return df
 
 
 
