@@ -8,7 +8,7 @@ __copyright__ = "Statistics Norway 2019, Seksjon 426"
 __credits__ = ['na']
 
 __licence__ = 'n/a'
-__version__ = '
+__version__ = 
 __maintainer__ = 'Simen Svenkerud'
 __ email__ = 'ssv@ssb.no'
 __status__ = 'Development'
@@ -130,9 +130,9 @@ def conditional_area_adjustments(df, unit_area, total_area, counter_col, min_tre
     the total area, instead. 
     *This should possibly be improoved upon later*
     
-    :param df:
-    :type df:
-    :param unit_area:
+    :param df: DataFrame to perform calculation on
+    :type df: DataFrame
+    :param unit_area: 
     :type unit_area:
     :param total_area:
     :type total_area:

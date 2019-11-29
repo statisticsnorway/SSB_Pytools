@@ -8,6 +8,7 @@ from datetime import datetime
 import seaborn as sns
 import math
 import time
+import codecs
 
 from pandas.api.types import is_string_dtype, is_numeric_dtype, is_categorical_dtype
 
