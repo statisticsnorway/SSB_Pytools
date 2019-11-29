@@ -156,25 +156,21 @@ def conditional_area_adjustments(df, unit_area, total_area, counter_col, min_tre
     
     return df
 
-def total_area_unit_area_adjustments(df, unit_area, total_area,min_treshold):
-    '''
-    This is a highly custom function for this script only, 
-    it aims to make sure that unit size i not larger than total size,
-    and that in the case of missing unit size we can take a proportion of 
-    the total area, instead. 
-    
-    * This should possibly be improoved upon later*
-    '''
-    tot = np.array(df[total_area].values.tolist())
-    a = np.array(df[unit_area].values.tolist())
-    
-    df[total_area] = np.where((tot<a)&(tot<min_treshold),a, tot).tolist()
-    
-    return df
 
-def join_df_2_one(new_df, old_dfs, join_on):
+def join_df_2_one(old_dfs, join_on):
     '''
     Function that coins a list of Data Frames to a singel frame
+    
+    Takes a list of dataframes and kombines them into a singel dataframe, 
+    given they share a joining key.
+    The join is perfored using a standard left outer join
+    
+
+    :param old_dfs: List of 2 dataframes to be merged
+    :type old_dfs: list, dataframes
+    :param join_on: join key for the join process
+    :type join_on: Str
+    
     '''
     new_df = old_dfs[0]
     for i in old_dfs[1:]:
@@ -184,7 +180,16 @@ def join_df_2_one(new_df, old_dfs, join_on):
 
 def seperate_by_value(df, split_col, split_value, new_df):
     '''
-    Split a Data frame in to by a value
+    Split a Data frame in two by a value
+    
+    :param df: The dataframe to perform the split on
+    :type df: DataFrame
+    :param split_col: The name of the column to use as split basis
+    :type split_col: Str, Column name
+    :param split_value: The treshold for the split
+    :type split_value: Int or Float
+    :param new_df: list of new empty DataFrames
+    :type new_df: list
     '''
     new_df[0] = df.loc[(df[split_col]<split_value)==False]
     new_df[1] = df.loc[(df[split_col]<split_value)]
@@ -192,32 +197,49 @@ def seperate_by_value(df, split_col, split_value, new_df):
     return  new_df[0], new_df[1]
 
 
-
-def replace_values(col, value, to_replace = np.nan, df=df):
+def fixregionalcode(col, region='kommune'):
     '''
-    Replaces values in the given columns.
+    Function to correct the regional code in a given column
     
-    df
-    col
-    to_replace
-    value
-    '''
-    df[col]=df[col].replace(to_replace, value)
-    return df
-
-def coalece_columns(new_col, old_col, coalece_col, df=df):
-    '''
-    Coaleces a series of collumns into a new column
+    This funtion takes a sereis as input. It converts to string variables. 
+    Adds leading zeros where needed.
+    removes decimalpositions in strings
     
-    df
-    new_col
-    old_col
-    coalece_col
+    :param col: the coloumn to perform the correction on
+    :type col: Str
+    :param region: type of regional code to return. Either kommune or fylke
+    :type region: Str, optional *Default: kommune*
+    :return: a list contining the corrected regional codes
     '''
-    df[new_col] = df[old_col].combine_first(df[coalece_col])
-    return df
+    data = col
+    all_string = []
+    for i in data:
+        if type(i)==str:
+            all_string.append(i)
+        elif type(i)==float:
+            s=int(i)
+            all_string.append(str(s))
+        else:
+            all_string.append(str(i))
 
+    corr_region = []
+    for i in all_string:
+        if len(i)<4:
+            corr_region.append("{0:0>4}".format(i))
+        elif (len(i)>4)&(i[3]=='.'):
+            corr_region.append("{0:0>4}".format(i[:3]))
+        else:
+            corr_region.append("{0:0>4}".format(i[:4]))
 
+    if region == 'fylke':
+        fylkesnr = []
+        for i in corr_region:
+            fylkesnr.append(i[:2])
+        return fylkesnr
+    elif region == 'kommune':
+        return corr_region
+    else:
+        raise ValueError('Please enter either: fylke or kommune')
 
 
 
