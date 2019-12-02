@@ -44,7 +44,7 @@ def ColumnComparison (data_set1, data_set2, output ='yes', log = None):
 
     return
 
-def correctionDetection(start_data, comparison_data, log=None):
+def correctionDetection(start_data, comparison_data,output=='yes' log=None):
     
     if start_data.equals(comparison_data)==True:
         print('No differneces detected, data considderes equal')
@@ -54,18 +54,35 @@ def correctionDetection(start_data, comparison_data, log=None):
         for col in comparison_data.columns:
             changes = comparison_data.loc[diff[col]]
             original = start_data.loc[diff[col]]
-            
-            if len(changes) > 0:
-                
-                print('Column ',str(col),' is changed!')
-                print(len(changes),' Changes detected')
-                for i in changes.reset_index().index:
-                    print('\nChange nr: ',i+1)
-                    print('Changes: ',changes.iloc[[i]].to_string(header=False))
-                    print('Original: ',original.iloc[[i]].to_string(header=False))
+            if output == 'yes':
+                if len(changes) > 0:
+                    print('Column ',str(col),' is changed!')
+                    print(len(changes),' Changes detected')
+                    for i in changes.reset_index().index:
+                        print('\nChange nr: ',i+1)
+                        print('Changes: ',changes.iloc[[i]].to_string(header=False))
+                        print('Original: ',original.iloc[[i]].to_string(header=False))
+            if output == 'no':
+                print('No detaild output printed to screen')
         
         
     if log != None:
+        timestr = time.strftime("%Y%m%d")
         with open(log+timestr+'.log', 'w') as f:
             if start_data.equals(comparison_data)==True:
-                f.write('No differneces detected, data considderes equal')
+                f.write('\n\nNo differneces detected, data considderes equal')
+            elif start_data.equals(comparison_data)==False:
+                f.write('\n\nDifferences detected')
+                diff = start_data != comparison_data
+                for col in comparison_data.columns:
+                    changes = comparison_data.loc[diff[col]]
+                    original = start_data.loc[diff[col]]
+
+                    if len(changes) > 0:
+
+                        f.write('\n\nColumn %s is changed!' % str(col))
+                        f.write('\n%s Changes detected' % len(changes),)
+                        for i in changes.reset_index().index:
+                            f.write('\n\nChange nr: %s' % str(i+1))
+                            f.write('\nChanges: %s' % changes.iloc[[i]].to_string(header=False))
+                            f.write('\nOriginal: %s' % original.iloc[[i]].to_string(header=False))
