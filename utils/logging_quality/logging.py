@@ -54,10 +54,13 @@ def correctionDetection(start_data, comparison_data, log=None):
         for col in comparison_data.columns:
             changes = comparison_data.loc[diff[col]]
             original = start_data.loc[diff[col]]
-            if len(changes) > 1:
+            
+            if len(changes) > 0:
+                
                 print('Column ',str(col),' is changed!')
+                print(len(changes),' Changes detected')
                 for i in changes.reset_index().index:
-                    print('\nChange nr: ',i)
+                    print('\nChange nr: ',i+1)
                     print('Changes: ',changes.iloc[[i]].to_string(header=False))
                     print('Original: ',original.iloc[[i]].to_string(header=False))
         
