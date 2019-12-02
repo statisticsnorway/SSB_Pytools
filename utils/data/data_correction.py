@@ -99,26 +99,7 @@ def Collect_value_from_prioritised_3variables(df,prioritised_col,new_col, tresho
     
     return df
 
-def add_counter_col(df, grouping_col, counting_col, new_col_name):
-    '''
-    Adds a counter column based on a given grouping variable to a DataFrame
-    
-    :param df: DataFrame to perform calculation on
-    :type df: DataFrame
-    :param grouping_col: The name of the column to use as grouping variable in counting
-    :type grouping_col: Str, column name 
-    :param counting_col: The name of the column to count
-    :type counting_col: Str, columnname
-    :param new_col_name: The name of the new counting column
-    :type new_col_name: Str, columnname
-    :return: A copy of the dataframe with a counting column attached
-    :rtypes: DataFrame
-    '''
-    counter = df.groupby(grouping_col)[counting_col].count().reset_index()
-    counter.columns = [grouping_col, new_col_name]
-    df = pd.merge(df, counter, on=grouping_col, how ='left')
-    
-    return df
+
 
 def conditional_area_adjustments(df, unit_area, total_area, counter_col, min_treshold=1, max_treshold=1000):
     '''
@@ -157,44 +138,7 @@ def conditional_area_adjustments(df, unit_area, total_area, counter_col, min_tre
     return df
 
 
-def join_df_2_one(old_dfs, join_on):
-    '''
-    Function that coins a list of Data Frames to a singel frame
-    
-    Takes a list of dataframes and kombines them into a singel dataframe, 
-    given they share a joining key.
-    The join is perfored using a standard left outer join
-    
 
-    :param old_dfs: List of 2 dataframes to be merged
-    :type old_dfs: list, dataframes
-    :param join_on: join key for the join process
-    :type join_on: Str
-    
-    '''
-    new_df = old_dfs[0]
-    for i in old_dfs[1:]:
-        new_df = pd.merge(new_df, i, on=join_on)
-
-    return new_df
-
-def seperate_by_value(df, split_col, split_value, new_df):
-    '''
-    Split a Data frame in two by a value
-    
-    :param df: The dataframe to perform the split on
-    :type df: DataFrame
-    :param split_col: The name of the column to use as split basis
-    :type split_col: Str, Column name
-    :param split_value: The treshold for the split
-    :type split_value: Int or Float
-    :param new_df: list of new empty DataFrames
-    :type new_df: list
-    '''
-    new_df[0] = df.loc[(df[split_col]<split_value)==False]
-    new_df[1] = df.loc[(df[split_col]<split_value)]
-    
-    return  new_df[0], new_df[1]
 
 
 def fixregionalcode(col, region='kommune'):
