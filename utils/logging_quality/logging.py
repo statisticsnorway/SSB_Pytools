@@ -44,7 +44,7 @@ def ColumnComparison (data_set1, data_set2, output ='yes', log = None):
 
     return
 
-def correctionDetection(start_data, comparison_data,output=='yes' log=None):
+def correctionDetection(start_data, comparison_data,output='yes', log=None):
     
     if start_data.equals(comparison_data)==True:
         print('No differneces detected, data considderes equal')
