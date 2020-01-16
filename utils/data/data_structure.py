@@ -99,7 +99,7 @@ def hirarkisk_justering (col, hirarchy_pos):
     return new_hirarchy
 
 
-def Prorate_column(col, prorates, decimal_points):
+def prorate_column(col, prorates, decimal_points):
     '''
     Takes a column of weights and prorates a given total down the hirachy.
     Returns a list with the prorated value
