@@ -41,10 +41,7 @@ def Decryption_numeric_ID(df, col, length, Enc_key=Enc_key):
     encryptet_col = []
     print(f'Encrypting: {col}')
     for i in df[col]:
-        if len(str(i)) == 1:
-            empty += 1
-            encryptet_col.append(i)
-        elif len(str(i))==length:
+        if len(str(i))==length:
             x = e.decrypt(str(i))
             encryptet_col.append(x)
         else:
@@ -64,13 +61,17 @@ def Encryption_string(df, col, Enc_key=Enc_key):
     alphabet = 'qwertyuiopåasdfghjkløæzxcvbnmÅPOIUYTREWQÆØLKJHGFDSAMNBVCXZ -'
     encrypted_col = []
     for i in df[col]:
-        words = str.split(i)
-        Enc_sentance = []
-        for word in words:
-            e = pyffx.String(key, alphabet=alphabet, length=len(word))
-            x = e.encrypt(word)
-            Enc_sentance.append(x)
-        encrypted_col.append(Enc_sentance)
+        if len(str(i)) == 1:
+            empty += 1
+            encryptet_col.append(i)
+        else:
+            words = str.split(i)
+            Enc_sentance = []
+            for word in words:
+                e = pyffx.String(key, alphabet=alphabet, length=len(word))
+                x = e.encrypt(word)
+                Enc_sentance.append(x)
+            encrypted_col.append(Enc_sentance)
     return encrypted_col
 
 
