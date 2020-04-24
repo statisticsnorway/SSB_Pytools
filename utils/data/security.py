@@ -22,7 +22,7 @@ def Encryption_numeric_ID(df, col, length, Enc_key=Enc_key):
             encryptet_col.append(x)
         else:
             wrong_length = len(str(i))
-            error_alphabet = 'qwertyuiopåasdfghjkløæzxcvbnmQWERTYUIOPÅASDFGHJKLØÆZXCVBNM1234567890'
+            error_alphabet = 'qwertyuiopåasdfghjkløæzxcvbnmQWERTYUIOPÅASDFGHJKLØÆZXCVBNM1234567890_'
             error_e =pyffx.String(key, alphabet=error_alphabet,length=wrong_length)
             x = error_e.encrypt(str(i))
             encryptet_col.append(x)
@@ -46,7 +46,7 @@ def Decryption_numeric_ID(df, col, length, Enc_key=Enc_key):
             encryptet_col.append(x)
         else:
             wrong_length = len(str(i))
-            error_alphabet = 'qwertyuiopåasdfghjkløæzxcvbnmQWERTYUIOPÅASDFGHJKLØÆZXCVBNM1234567890'
+            error_alphabet = 'qwertyuiopåasdfghjkløæzxcvbnmQWERTYUIOPÅASDFGHJKLØÆZXCVBNM1234567890_'
             error_e =pyffx.String(key, alphabet=error_alphabet,length=wrong_length)
             x = error_e.decrypt(str(i))
             encryptet_col.append(x)
@@ -90,4 +90,42 @@ def Decryption_string(df, col, Enc_key=Enc_key):
         sentance = ' '.join(word for word in decrypted_sentance)
         
         encrypted_col.append(sentance)
+    return encrypted_col
+
+def Encryption_num_adr(df, col, Enc_key=Enc_key, length=None):
+    empty = 0
+    key = Enc_key
+    alphabet = 'qwertyuiopåasdfghjkløæzxcvbnmÅPOIUYTREWQÆØLKJHGFDSAMNBVCXZ0123456789'
+    encrypted_col = []
+    municipality = []
+    for i in df[col]:
+        municipality.append(i[:4])
+        if set(i)=={'0'}:
+            empty += 1
+            encrypted_col.append(i)
+        elif (length != None) & (len(i)!= length):
+            i = i.ljust(length, '0')
+            e = pyffx.String(key, alphabet=alphabet, length=len(i))
+            x = e.encrypt(i)
+            encrypted_col.append(x)
+        else:
+            e = pyffx.String(key, alphabet=alphabet, length=len(i))
+            x = e.encrypt(i)
+            encrypted_col.append(x)
+    return encrypted_col, municipality
+
+def Decryption_num_adr(df, col, Enc_key=Enc_key):
+    empty = 0
+    key = Enc_key
+    alphabet = 'qwertyuiopåasdfghjkløæzxcvbnmÅPOIUYTREWQÆØLKJHGFDSAMNBVCXZ0123456789'
+    encrypted_col = []
+    municipality = []
+    for i in df[col]:
+        if set(i)=={'0'}:
+            empty += 1
+            encrypted_col.append(i)
+        else:
+            e = pyffx.String(key, alphabet=alphabet, length=len(i))
+            x = e.decrypt(i)
+            encrypted_col.append(x)
     return encrypted_col
