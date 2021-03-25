@@ -1,11 +1,11 @@
 # SSB PyTools
-> A collection of data processing Python functions for the use in Statistics Norway (SSB)
+> A collection of data processing Python functions for use by Statistics Norway (SSB)
 
 [![PyPI version](https://img.shields.io/pypi/v/ssb_Pytools.svg)](https://pypi.python.org/pypi/ssb_Pytools/)
 [![Status](https://img.shields.io/pypi/status/ssb_Pytools.svg)](https://pypi.python.org/pypi/ssb_Pytools/)
 [![License](https://img.shields.io/pypi/l/ssb_Pytools.svg)](https://pypi.python.org/pypi/ssb_Pytools/)
 
-The SSB  Pytools Library is a colection of Data processing functions for the use in Data processing in Statistics Norway
+The SSB Pytools Library is a collection of Data processing functions for the use by Statistics Norway
 
 
 
