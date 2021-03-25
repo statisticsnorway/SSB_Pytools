@@ -30,3 +30,4 @@ statsmodels >= 0.12.1
 scikit-learn >= 0.23.2
 setuptools >= 49.6.0.0
 ipywidgets >= 7.6.3
+pytest >= 6.2.2
